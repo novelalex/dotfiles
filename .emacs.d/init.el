@@ -25,8 +25,13 @@
 (use-package smex)
 (smex-initialize)
 
+(use-package ido-completing-read+)
+
 (use-package multiple-cursors)
 
+(use-package company)
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay nil)
 
 ;; STYLING --------------------------------------------------------------------------------
 
@@ -64,7 +69,7 @@
 
 ;; Formatting -------------------------------------------------------------------------
 
-(defun astyle-buffer ()
+(defun astyle-buffer (&optional justify)
   (interactive)
   (let ((saved-line-number (line-number-at-pos)))
     (shell-command-on-region
@@ -75,6 +80,14 @@
      t)
     (goto-line saved-line-number)))
 
+(add-hook 'simpc-mode-hook
+          (lambda ()
+            (interactive)
+            (setq-local fill-paragraph-function 'astyle-buffer)))
+
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+
 ;; QoL --------------------------------------------------------------------------------
 
 (delete-selection-mode 1)
@@ -82,6 +95,7 @@
 ;; ido
 (ido-mode 1)
 (ido-everywhere 1)
+(ido-ubiquitous-mode 1)
 
 ;; dont touch this file emacs
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -135,7 +149,7 @@
 (global-set-key (kbd "C-c c") #'org-capture)
 
 ;; Formatting
-(global-set-key (kbd "C-c f") #'astyle-buffer)
+;;(global-set-key (kbd "C-c f") #'astyle-buffer)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
